@@ -261,6 +261,7 @@ class Jinja2ChatFormatter(ChatFormatter):
             """
             return datetime.datetime.now().strftime(format_string)
 
+        chat_template_kwargs = kwargs.get("chat_template_kwargs", {}) or {}
         prompt = self._environment.render(
             messages=messages,
             eos_token=self.eos_token,
@@ -272,6 +273,7 @@ class Jinja2ChatFormatter(ChatFormatter):
             function_call=function_call,
             tools=tools,
             tool_choice=tool_choice,
+            **chat_template_kwargs,
         )
 
         stopping_criteria = None
@@ -638,6 +640,7 @@ def chat_formatter_to_chat_completion_handler(
             function_call=function_call,
             tools=tools,
             tool_choice=tool_choice,
+            **({k: v for k, v in kwargs.items() if k == "chat_template_kwargs"}),
         )
         prompt = llama.tokenize(
             result.prompt.encode("utf-8"),
@@ -818,10 +821,12 @@ def hf_tokenizer_config_to_chat_formatter(
                     role="assistant", content=""
                 ),
             ]
+        chat_template_kwargs = kwargs.get("chat_template_kwargs", {}) or {}
         prompt = env.render(
             messages=messages,
             bos_token=bos_token,
             eos_token=eos_token,
+            **chat_template_kwargs,
         )
         return ChatFormatterResponse(
             prompt=prompt, stop=[eos_token, bos_token], added_special=True
@@ -3287,13 +3292,15 @@ while also answering every question accurately, clearly, and step-by-step when a
         assert self.mtmd_ctx is not None
 
         # 2. Concurrent Preprocessing & Ledger Construction
+        chat_template_kwargs = kwargs.get("chat_template_kwargs", {}) or {}
         full_prompt_ids, chunk_token_spans, chunks, bitmap_cleanup = self._process_mtmd_prompt(
             llama=llama,
             messages=messages,
             functions=functions,
             function_call=function_call,
             tools=tools,
-            tool_choice=tool_choice
+            tool_choice=tool_choice,
+            **chat_template_kwargs,
         )
 
         if self.verbose:

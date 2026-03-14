@@ -2623,6 +2623,7 @@ prompt: The prompt to generate text from.
         grammar_lazy: bool = False,
         logprobs: Optional[bool] = None,
         top_logprobs: Optional[int] = None,
+        chat_template_kwargs: Optional[Dict[str, str]] = None,
     ) -> Union[
         CreateChatCompletionResponse, Iterator[CreateChatCompletionStreamResponse]
     ]:
@@ -2670,6 +2671,7 @@ prompt: The prompt to generate text from.
             logits_processor: A list of logits processors to use.
             grammar: A grammar to use.
             grammar_lazy: If True, enables lazy evaluation.
+            chat_template_kwargs: Additional keyword arguments to pass to the Jinja chat template. For example: {"enable_thinking": "false"}.
 
         Returns:
             Generated chat completion or a stream of chat completion chunks.
@@ -2724,6 +2726,7 @@ prompt: The prompt to generate text from.
             logits_processor=logits_processor,
             grammar=grammar,
             grammar_lazy=grammar_lazy,
+            **({"chat_template_kwargs": chat_template_kwargs} if chat_template_kwargs is not None else {}),
         )
 
     def create_chat_completion_openai_v1(
