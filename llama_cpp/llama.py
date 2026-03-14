@@ -2684,6 +2684,7 @@ prompt: The prompt to generate text from.
         logprobs: Optional[bool] = None,
         top_logprobs: Optional[int] = None,
         assistant_prefill: bool = False,
+        chat_template_kwargs: Optional[Dict[str, str]] = None,
     ) -> Union[
         CreateChatCompletionResponse, Iterator[CreateChatCompletionStreamResponse]
     ]:
@@ -2739,6 +2740,7 @@ prompt: The prompt to generate text from.
                 Must contain a "data" key with a flattened 1D list of floats.
                 Optionally accepts "layer_start" (int, defaults to 1) and "layer_end" (int, defaults to the model's total layer count).
                 Note: The length of the "data" list MUST be at least `n_embd * layer_end`, with zero-padding for any skipped early layers.
+            chat_template_kwargs: Additional keyword arguments to pass to the Jinja chat template. For example: {"enable_thinking": "false"}.
 
         Returns:
             Generated chat completion or a stream of chat completion chunks.
@@ -2796,6 +2798,7 @@ prompt: The prompt to generate text from.
             active_loras=active_loras,
             control_vector=control_vector,
             assistant_prefill=assistant_prefill,
+            **({"chat_template_kwargs": chat_template_kwargs} if chat_template_kwargs is not None else {}),
         )
 
     def create_chat_completion_openai_v1(

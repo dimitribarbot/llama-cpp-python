@@ -249,6 +249,10 @@ class CreateChatCompletionRequest(BaseModel):
     mirostat_tau: float = mirostat_tau_field
     mirostat_eta: float = mirostat_eta_field
     grammar: Optional[str] = None
+    chat_template_kwargs: Optional[Dict[str, str]] = Field(
+        default=None,
+        description="Additional keyword arguments to pass to the Jinja chat template. For example: {\"enable_thinking\": \"false\"}.",
+    )
 
     model_config = {
         "json_schema_extra": {
